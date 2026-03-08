@@ -51,7 +51,7 @@ adminRouter.post('/users', async (req, res) => {
 
     const normalizedRole = normalizeRole(role);
     if (!normalizedRole) {
-      return res.status(400).json({ error: "Geçersiz rol. Geçerli değerler: ADMIN, KIDEMLI_MUHENDIS, SAHA_MUHENDISI." });
+      return res.status(400).json({ error: 'Geçersiz rol seçimi.' });
     }
 
     const existingUsername = await prisma.user.findUnique({

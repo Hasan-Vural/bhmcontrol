@@ -2,25 +2,29 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { Sun, Moon, X } from 'lucide-react';
+import { Sun, Moon, Shield } from 'lucide-react';
 
-export function Login() {
-  const { login } = useAuth();
+export function LoginAdmin() {
+  const { login, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [logoModalOpen, setLogoModalOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await login(loginId, password);
-      navigate('/');
+      const user = await login(loginId, password);
+      if (user?.role !== 'ADMIN') {
+        await logout();
+        setError('Bu sayfaya sadece Admin kullanıcılar giriş yapabilir.');
+        return;
+      }
+      navigate('/admin');
     } catch (err) {
       setError(err.message || 'Giriş yapılamadı.');
     } finally {
@@ -41,19 +45,15 @@ export function Login() {
         </button>
       </div>
       <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 border border-slate-200 dark:border-slate-700">
-        <button
-          type="button"
-          onClick={() => setLogoModalOpen(true)}
-          className="w-full flex justify-center mb-6 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-xl"
-        >
-          <img
-            src={theme === 'dark' ? '/logos/bhm-control-logo-dark.png' : '/logos/bhm-control-logo-light.png'}
-            alt="BHM Control"
-            className="h-40 min-h-[10rem] w-auto max-w-full object-contain"
-          />
-        </button>
-        <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-1">Bakım Destek Girişi</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Lütfen kurumsal kullanıcı bilgilerinizle giriş yapın.</p>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center">
+            <Shield className="w-6 h-6 text-violet-600 dark:text-violet-400" />
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Admin Portal</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Sadece Admin hesabı ile giriş yapın.</p>
+          </div>
+        </div>
         {error && (
           <div className="mb-4 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
             {error}
@@ -71,7 +71,7 @@ export function Login() {
               className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
-              placeholder="Kullanıcı adı veya e-posta giriniz"
+              placeholder="Admin kullanıcı adı veya e-posta"
               required
             />
           </div>
@@ -86,62 +86,27 @@ export function Login() {
               className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Şifrenizi girin"
               required
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full inline-flex justify-center items-center rounded-lg bg-primary-600 dark:bg-primary-500 text-white text-sm font-medium px-4 py-2.5 hover:bg-primary-700 dark:hover:bg-primary-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+            className="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-violet-600 dark:bg-violet-500 text-white text-sm font-medium px-4 py-2.5 hover:bg-violet-700 dark:hover:bg-violet-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
+            <Shield className="w-4 h-4" />
+            {loading ? 'Kontrol ediliyor...' : 'Admin Girişi'}
           </button>
         </form>
         <p className="mt-6 text-center">
           <Link
-            to="/login/admin"
+            to="/login"
             className="text-sm text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400"
           >
-            Admin Portal girişi →
+            ← Normal girişe dön
           </Link>
         </p>
       </div>
-
-      {/* Logo modal */}
-      {logoModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/60 p-4"
-          onClick={() => setLogoModalOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label="BHM Control logosu"
-        >
-          <div
-            className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-6 w-[min(90vw,800px)] flex flex-col items-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-end w-full mb-2">
-              <button
-                type="button"
-                onClick={() => setLogoModalOpen(false)}
-                className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                aria-label="Kapat"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="w-full min-h-[70vh] flex items-center justify-center">
-              <img
-                src={theme === 'dark' ? '/logos/bhm-control-logo-dark.png' : '/logos/bhm-control-logo-light.png'}
-                alt="BHM Control"
-                className="max-w-full max-h-[75vh] w-auto h-auto object-contain"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-

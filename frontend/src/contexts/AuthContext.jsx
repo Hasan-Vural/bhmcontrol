@@ -39,8 +39,10 @@ export function AuthProvider({ children }) {
     return res.user;
   };
 
-  const impersonate = async (userId) => {
-    const res = await api.authImpersonate({ userId });
+  const impersonate = async (userId, testHesapToken) => {
+    const res = testHesapToken
+      ? await api.testHesap.impersonate(userId, testHesapToken)
+      : await api.authImpersonate({ userId });
     if (res.token) {
       window.localStorage.setItem('auth_token', res.token);
       api.setAuthToken(res.token);

@@ -49,7 +49,7 @@ docsRouter.get('/', async (req, res) => {
     const info = await getDocumentInfo();
     res.json(info);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'İşlem sırasında bir hata oluştu.' });
   }
 });
 
@@ -66,7 +66,7 @@ docsRouter.post('/upload', upload.single('document'), async (req, res) => {
       size: req.file.size,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'İşlem sırasında bir hata oluştu.' });
   }
 });
 
@@ -84,7 +84,7 @@ docsRouter.post('/ask', async (req, res) => {
   } catch (error) {
     console.error('Soru-cevap hatası:', error);
     res.status(500).json({
-      error: error.message,
+      error: 'Bir hata oluştu.',
       answer: 'Bir hata oluştu. Lütfen tekrar deneyin.',
     });
   }
@@ -107,7 +107,7 @@ docsRouter.delete('/:filename', async (req, res) => {
     if (error.code === 'ENOENT') {
       res.status(404).json({ error: 'Dosya bulunamadı' });
     } else {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: 'İşlem sırasında bir hata oluştu.' });
     }
   }
 });

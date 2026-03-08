@@ -6,6 +6,15 @@ node_modules/
 .env.*
 !.env.example
 
+# Sertifikalar (CA / client cert – repoda tutulmaz)
+certs/
+*.pem
+*.p8
+
+# Cloud SQL Proxy binary (Google'dan indirilir)
+cloud_sql_proxy*
+cloud_sql_proxy.exe
+
 # Build outputs
 dist/
 dist-ssr/

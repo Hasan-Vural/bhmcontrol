@@ -9,13 +9,15 @@ import { Resolutions } from './pages/Resolutions';
 import { Alerts } from './pages/Alerts';
 import { AlertDetail } from './pages/AlertDetail';
 import { Chat } from './pages/Chat';
-import { AiConsole } from './pages/AiConsole';
 import { Analytics } from './pages/Analytics';
 import { Login } from './pages/Login';
+import { LoginAdmin } from './pages/LoginAdmin';
 import { useAuth } from './contexts/AuthContext';
 import { SirketHafizasiApprovals } from './pages/SirketHafizasiApprovals';
 import { AdminUsers } from './pages/AdminUsers';
 import { TestHesap } from './pages/TestHesap';
+import { GirisTamam } from './pages/GirisTamam';
+import { NotFound } from './pages/NotFound';
 
 function RequireAuth({ children }) {
   const { user, loading } = useAuth();
@@ -49,11 +51,12 @@ function AppLayoutRoutes() {
         <Route path="/alerts" element={<Alerts />} />
         <Route path="/alerts/:id" element={<AlertDetail />} />
         <Route path="/chat" element={<Chat />} />
-        <Route path="/ai-console" element={<AiConsole />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/approvals" element={<SirketHafizasiApprovals />} />
         <Route path="/admin" element={<AdminUsers />} />
         <Route path="/test/hesap" element={<TestHesap />} />
+        <Route path="/giris-tamam" element={<GirisTamam />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>
   );
@@ -62,7 +65,9 @@ function AppLayoutRoutes() {
 export default function App() {
   return (
     <Routes>
+      <Route path="/login/admin" element={<LoginAdmin />} />
       <Route path="/login" element={<Login />} />
+<Route path="/test/hesap" element={<TestHesap />} />
       <Route
         path="/*"
         element={

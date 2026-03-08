@@ -26,7 +26,7 @@ sirketHafizasiRouter.post('/', async (req, res) => {
     return res.status(201).json(created);
   } catch (e) {
     console.error('Saha çözümü kaydetme hatası:', e);
-    return res.status(500).json({ error: 'Saha çözümü kaydedilirken hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'Saha çözümü kaydedilirken hata oluştu.' });
   }
 });
 
@@ -47,7 +47,7 @@ sirketHafizasiRouter.get(
       return res.json(list);
     } catch (e) {
       console.error('Saha çözümü pending list error:', e);
-      return res.status(500).json({ error: 'Onay bekleyen kayıtlar alınırken hata oluştu.', details: e.message });
+      return res.status(500).json({ error: 'Onay bekleyen kayıtlar alınırken hata oluştu.' });
     }
   },
 );
@@ -107,7 +107,7 @@ sirketHafizasiRouter.patch(
       return res.json(updated);
     } catch (e) {
       console.error('Saha çözümü red hatası:', e);
-      return res.status(500).json({ error: 'Kayıt reddedilirken hata oluştu.', details: e.message });
+      return res.status(500).json({ error: 'Kayıt reddedilirken hata oluştu.' });
     }
   },
 );

@@ -121,6 +121,20 @@ export const api = {
   authLogin: (body) => request('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   authLogout: () => request('/auth/logout', { method: 'POST' }),
   authImpersonate: (body) => request('/auth/test-login', { method: 'POST', body: JSON.stringify(body) }),
+  authVerifyTestHesap: (password) =>
+    request('/auth/verify-test-hesap', { method: 'POST', body: JSON.stringify({ password }) }),
+  testHesap: {
+    users: (token) =>
+      request('/test-hesap/users', {
+        headers: token ? { 'X-Test-Hesap-Token': token } : {},
+      }),
+    impersonate: (userId, token) =>
+      request('/auth/test-login', {
+        method: 'POST',
+        body: JSON.stringify({ userId }),
+        headers: token ? { 'X-Test-Hesap-Token': token } : {},
+      }),
+  },
   admin: {
     users: {
       list: () => request('/admin/users'),

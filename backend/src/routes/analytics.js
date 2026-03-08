@@ -85,7 +85,7 @@ analyticsRouter.get('/overview', async (req, res) => {
     });
   } catch (e) {
     console.error('Analytics overview error:', e);
-    res.status(500).json({ error: 'Analytics overview hesaplanırken bir hata oluştu.', details: e.message });
+    res.status(500).json({ error: 'Analytics overview hesaplanırken bir hata oluştu.' });
   }
 });
 
@@ -120,7 +120,7 @@ analyticsRouter.get('/machine-ranking', async (req, res) => {
     res.json(ranking);
   } catch (e) {
     console.error('Analytics machine ranking error:', e);
-    res.status(500).json({ error: 'Makine sıralaması hesaplanırken bir hata oluştu.', details: e.message });
+    res.status(500).json({ error: 'Makine sıralaması hesaplanırken bir hata oluştu.' });
   }
 });
 
@@ -161,7 +161,7 @@ analyticsRouter.get('/ai-usage', async (req, res) => {
     });
   } catch (e) {
     console.error('Analytics ai usage error:', e);
-    res.status(500).json({ error: 'AI kullanım istatistikleri hesaplanırken bir hata oluştu.', details: e.message });
+    res.status(500).json({ error: 'AI kullanım istatistikleri hesaplanırken bir hata oluştu.' });
   }
 });
 

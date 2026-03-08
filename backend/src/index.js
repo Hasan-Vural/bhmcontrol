@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import cors from 'cors';
 import { machinesRouter } from './routes/machines.js';
 import { faultCodesRouter } from './routes/faultCodes.js';
@@ -19,6 +20,7 @@ import { conversationsRouter } from './routes/conversations.js';
 import { sirketHafizasiRouter } from './routes/sirketHafizasi.js';
 import { docChatRouter } from './routes/docChat.js';
 import { adminRouter } from './routes/admin.js';
+import { testHesapRouter } from './routes/testHesap.js';
 import { authMiddleware } from './middleware/auth.js';
 import { startMockSensorService, registerMachineIds } from './services/mockSensorService.js';
 import { prisma } from './lib/prisma.js';
@@ -53,7 +55,7 @@ app.get('/api/public/sirket-hafizasi/approved', async (req, res) => {
     res.json(list);
   } catch (e) {
     console.error('Public approved saha çözümleri hatası:', e);
-    res.status(500).json({ error: 'Onaylı saha çözümleri alınırken hata oluştu.', details: e.message });
+    res.status(500).json({ error: 'Onaylı saha çözümleri alınırken hata oluştu.' });
   }
 });
 
@@ -72,8 +74,21 @@ app.use('/api/conversations', authMiddleware, conversationsRouter);
 app.use('/api/sirket-hafizasi', authMiddleware, sirketHafizasiRouter);
 app.use('/api/doc-chat', authMiddleware, docChatRouter);
 app.use('/api/admin', authMiddleware, adminRouter);
+app.use('/api/test-hesap', testHesapRouter);
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
+
+// SPA: Build edilmiş frontend varsa sun; /login, /test/hesap vb. tek sayfa olarak index.html
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/metrics')) return next();
+    res.sendFile(path.join(frontendDist, 'index.html'), (err) => {
+      if (err) next(err);
+    });
+  });
+}
 
 startMockSensorService();
 prisma.machine.findMany({ where: { isActive: true }, select: { id: true } }).then((list) => {

@@ -12,7 +12,7 @@ docChatRouter.get('/conversations', async (req, res) => {
   try {
     const { documentName } = req.query;
     if (!documentName || typeof documentName !== 'string' || !documentName.trim()) {
-      return res.status(400).json({ error: 'documentName zorunludur.' });
+      return res.status(400).json({ error: 'Belge adı gerekli.' });
     }
 
     const list = await prisma.docChatConversation.findMany({
@@ -32,7 +32,7 @@ docChatRouter.get('/conversations', async (req, res) => {
     return res.json(list);
   } catch (e) {
     console.error('DocChat listConversations error:', e);
-    return res.status(500).json({ error: 'Sohbetler yüklenirken hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'Sohbetler listelenirken hata oluştu.' });
   }
 });
 
@@ -55,7 +55,7 @@ docChatRouter.get('/conversations/:id', async (req, res) => {
     return res.json(conv);
   } catch (e) {
     console.error('DocChat getConversation error:', e);
-    return res.status(500).json({ error: 'Sohbet yüklenirken hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'Sohbet yüklenirken hata oluştu.' });
   }
 });
 
@@ -68,7 +68,7 @@ docChatRouter.post('/conversations', async (req, res) => {
   try {
     const { documentName, pageScope, title } = req.body || {};
     if (!documentName || typeof documentName !== 'string' || !documentName.trim()) {
-      return res.status(400).json({ error: 'documentName zorunludur.' });
+      return res.status(400).json({ error: 'Belge adı gerekli.' });
     }
 
     const conv = await prisma.docChatConversation.create({
@@ -82,7 +82,7 @@ docChatRouter.post('/conversations', async (req, res) => {
     return res.status(201).json(conv);
   } catch (e) {
     console.error('DocChat createConversation error:', e);
-    return res.status(500).json({ error: 'Sohbet oluşturulurken hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'Sohbet oluşturulurken hata oluştu.' });
   }
 });
 
@@ -100,7 +100,7 @@ docChatRouter.delete('/conversations/:id', async (req, res) => {
       return res.status(404).json({ error: 'Sohbet bulunamadı.' });
     }
     console.error('DocChat deleteConversation error:', e);
-    return res.status(500).json({ error: 'Sohbet silinirken hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'Sohbet silinirken hata oluştu.' });
   }
 });
 
@@ -117,7 +117,7 @@ docChatRouter.post('/query', async (req, res) => {
       return res.status(400).json({ error: 'Geçerli bir soru göndermelisiniz.' });
     }
     if (!documentName || typeof documentName !== 'string' || !documentName.trim()) {
-      return res.status(400).json({ error: 'documentName zorunludur.' });
+      return res.status(400).json({ error: 'Belge adı gerekli.' });
     }
 
     const docName = documentName.trim();
@@ -225,6 +225,6 @@ docChatRouter.post('/query', async (req, res) => {
     });
   } catch (e) {
     console.error('DocChat query error:', e);
-    return res.status(500).json({ error: 'AI sorgusu sırasında bir hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'AI sorgusu sırasında bir hata oluştu.' });
   }
 });

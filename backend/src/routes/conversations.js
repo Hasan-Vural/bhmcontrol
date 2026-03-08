@@ -14,7 +14,7 @@ conversationsRouter.get('/', async (req, res) => {
     return res.json(list);
   } catch (e) {
     console.error('Conversations list error:', e);
-    return res.status(500).json({ error: 'Sohbetler listelenirken hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'Sohbetler listelenirken hata oluştu.' });
   }
 });
 
@@ -35,7 +35,7 @@ conversationsRouter.post('/', async (req, res) => {
     return res.status(201).json(conv);
   } catch (e) {
     console.error('Conversation create error:', e);
-    return res.status(500).json({ error: 'Sohbet oluşturulurken hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'Sohbet oluşturulurken hata oluştu.' });
   }
 });
 
@@ -74,7 +74,7 @@ conversationsRouter.patch('/:id', async (req, res) => {
     return res.json(updated);
   } catch (e) {
     console.error('Conversation update error:', e);
-    return res.status(500).json({ error: 'Sohbet güncellenirken hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'Sohbet güncellenirken hata oluştu.' });
   }
 });
 

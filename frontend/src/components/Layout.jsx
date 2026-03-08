@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Cpu, AlertTriangle, Wrench, Bell, Search, User, MessageSquare, Bot, BarChart2, FileCheck, Settings, UserCog, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, Cpu, AlertTriangle, Wrench, Bell, Search, User, MessageSquare, BarChart2, FileCheck, Settings, UserCog, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { api } from '../api/client';
@@ -12,7 +12,6 @@ const navItems = [
   { to: '/resolutions', icon: Wrench, label: 'Çözüm Adımları' },
   { to: '/alerts', icon: Bell, label: 'Uyarılar' },
   { to: '/chat', icon: MessageSquare, label: 'AI Chatbot' },
-  { to: '/ai-console', icon: Bot, label: 'Bakım AI Konsolu' },
   { to: '/analytics', icon: BarChart2, label: 'Raporlar' },
   {
     to: '/approvals',
@@ -26,12 +25,7 @@ const navItems = [
     label: 'Admin Portal',
     roles: ['ADMIN'],
   },
-  {
-    to: '/test/hesap',
-    icon: UserCog,
-    label: 'Test Hesaplar',
-    roles: ['ADMIN'],
-  },
+  { to: '/test/hesap', icon: UserCog, label: 'Test Hesaplar' },
 ];
 
 const breadcrumbMap = {
@@ -41,11 +35,11 @@ const breadcrumbMap = {
   '/resolutions': 'Bakım > Çözüm Adımları',
   '/alerts': 'Bakım > Uyarılar',
   '/chat': 'AI > Chatbot',
-  '/ai-console': 'AI > Bakım Konsolu',
   '/analytics': 'Bakım > Raporlar',
   '/approvals': 'Bakım > Saha Çözümü Onayı',
   '/admin': 'Yönetim > Kullanıcılar',
   '/test/hesap': 'Test > Hızlı Giriş',
+  '/giris-tamam': 'Giriş Tamamlandı',
 };
 
 function getBreadcrumb(pathname) {
@@ -226,9 +220,10 @@ export function Layout({ children }) {
             </button>
           </div>
         </header>
+
         <main
           className={`flex-1 ${
-            location.pathname === '/chat' || location.pathname === '/ai-console' ? 'p-0' : 'p-6'
+            location.pathname === '/chat' ? 'p-0' : 'p-6'
           } overflow-auto`}
         >
           {children}

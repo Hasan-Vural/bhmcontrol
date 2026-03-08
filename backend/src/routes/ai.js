@@ -25,7 +25,7 @@ aiRouter.post('/query', async (req, res) => {
 
     const normalizedMode = normalizeMode(mode);
     if (!normalizedMode) {
-      return res.status(400).json({ error: "Geçersiz mode. Geçerli değerler: 'short', 'detailed', 'work_order'." });
+      return res.status(400).json({ error: 'Geçersiz sorgu modu.' });
     }
 
     let machine = null;
@@ -100,7 +100,7 @@ aiRouter.post('/query', async (req, res) => {
     });
   } catch (e) {
     console.error('AI query error:', e);
-    return res.status(500).json({ error: 'AI sorgusu sırasında bir hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'AI sorgusu sırasında bir hata oluştu.' });
   }
 });
 
@@ -118,12 +118,12 @@ aiRouter.post('/feedback', async (req, res) => {
     const { aiSessionId, result, comment } = req.body || {};
 
     if (!aiSessionId || typeof aiSessionId !== 'string') {
-      return res.status(400).json({ error: 'aiSessionId zorunludur.' });
+      return res.status(400).json({ error: 'Geçersiz istek.' });
     }
 
     const normalizedResult = toFeedbackResult(result);
     if (!normalizedResult) {
-      return res.status(400).json({ error: "Geçersiz result. Geçerli değerler: 'SUCCESS', 'FAIL', 'PARTIAL'." });
+      return res.status(400).json({ error: 'Geçersiz geri bildirim değeri.' });
     }
 
     // Oturum var mı kontrol et
@@ -143,7 +143,7 @@ aiRouter.post('/feedback', async (req, res) => {
     return res.status(201).json(feedback);
   } catch (e) {
     console.error('AI feedback error:', e);
-    return res.status(500).json({ error: 'Geri bildirim kaydedilirken bir hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'Geri bildirim kaydedilirken bir hata oluştu.' });
   }
 });
 

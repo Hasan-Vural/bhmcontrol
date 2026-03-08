@@ -9,7 +9,7 @@ workOrdersRouter.post('/', async (req, res) => {
     const { machineId, faultEventId, aiSessionId, title, description, priority, estimatedMinutes, createdByUserId } = req.body || {};
 
     if (!title || typeof title !== 'string') {
-      return res.status(400).json({ error: 'title zorunludur.' });
+      return res.status(400).json({ error: 'Başlık gerekli.' });
     }
 
     const data = {
@@ -28,7 +28,7 @@ workOrdersRouter.post('/', async (req, res) => {
     return res.status(201).json(workOrder);
   } catch (e) {
     console.error('Work order create error:', e);
-    return res.status(500).json({ error: 'İş emri oluşturulurken bir hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'İş emri oluşturulurken bir hata oluştu.' });
   }
 });
 
@@ -56,7 +56,7 @@ workOrdersRouter.get('/', async (req, res) => {
     return res.json(workOrders);
   } catch (e) {
     console.error('Work order list error:', e);
-    return res.status(500).json({ error: 'İş emirleri listelenirken bir hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'İş emirleri listelenirken bir hata oluştu.' });
   }
 });
 
@@ -79,7 +79,7 @@ workOrdersRouter.get('/:id', async (req, res) => {
     return res.json(workOrder);
   } catch (e) {
     console.error('Work order detail error:', e);
-    return res.status(500).json({ error: 'İş emri detayı alınırken bir hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'İş emri detayı alınırken bir hata oluştu.' });
   }
 });
 
@@ -106,7 +106,7 @@ workOrdersRouter.patch('/:id', async (req, res) => {
       return res.status(404).json({ error: 'İş emri bulunamadı.' });
     }
     console.error('Work order update error:', e);
-    return res.status(500).json({ error: 'İş emri güncellenirken bir hata oluştu.', details: e.message });
+    return res.status(500).json({ error: 'İş emri güncellenirken bir hata oluştu.' });
   }
 });
 
