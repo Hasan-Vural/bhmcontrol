@@ -1,0 +1,304 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Machine {
+  id        String   @id @default(cuid())
+  name      String
+  type      MachineType
+  location  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  alerts         Alert[]
+  sensorReadings SensorReading[]
+
+  // Yeni ilişkiler
+  faultEvents FaultEvent[]
+  workOrders  WorkOrder[]
+  aiSessions  AiSession[]
+}
+
+enum MachineType {
+  electrical
+  hydraulic
+}
+
+model FaultCode {
+  id              String   @id @default(cuid())
+  code            String   @unique // e.g. E101
+  title           String
+  description     String?
+  severity        Severity
+  category        String?
+  responsibleRole String?  // electrical_maintenance, hydraulic_maintenance, periodic_maintenance, general
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  alerts      Alert[]
+  resolutions FaultResolution[]
+
+  // İlgili arıza olayları (geçmiş)
+  faultEvents FaultEvent[]
+}
+
+enum Severity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  INFO
+}
+
+model FaultResolution {
+  id              String   @id @default(cuid())
+  faultCodeId     String
+  stepOrder       Int
+  title           String
+  description     String?
+  toolsRequired   Json     // ["7'lik anahtar", "yankeski", "tel"]
+  estimatedMinutes Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  faultCode FaultCode @relation(fields: [faultCodeId], references: [id], onDelete: Cascade)
+}
+
+model Alert {
+  id          String    @id @default(cuid())
+  machineId   String
+  faultCodeId String
+  severity    Severity
+  message     String?
+  status      AlertStatus @default(OPEN)
+  createdAt   DateTime  @default(now())
+  acknowledgedAt DateTime?
+  resolvedAt  DateTime?
+
+  machine   Machine   @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  faultCode FaultCode @relation(fields: [faultCodeId], references: [id], onDelete: Cascade)
+}
+
+enum AlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+model SensorReading {
+  id        String   @id @default(cuid())
+  machineId String
+  type      SensorType
+  value     Float
+  unit      String
+  timestamp DateTime @default(now())
+
+  machine Machine @relation(fields: [machineId], references: [id], onDelete: Cascade)
+
+  @@index([machineId, type, timestamp])
+}
+
+enum SensorType {
+  pressure
+  temperature
+  vibration
+  gasFlow
+}
+
+// Geçmiş arıza olaylarını tutan model
+model FaultEvent {
+  id          String    @id @default(cuid())
+  machineId   String
+  faultCodeId String?
+  rawMessage  String
+  severity    Severity?
+  createdAt   DateTime  @default(now())
+  resolvedAt  DateTime?
+
+  machine   Machine   @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  faultCode FaultCode? @relation(fields: [faultCodeId], references: [id])
+
+  workOrders WorkOrder[]
+
+  @@index([machineId, createdAt])
+  @@index([faultCodeId])
+}
+
+// İş emirleri
+model WorkOrder {
+  id               String           @id @default(cuid())
+  machineId        String?
+  faultEventId     String?
+  aiSessionId      String?
+  title            String
+  description      String?
+  status           WorkOrderStatus  @default(OPEN)
+  priority         WorkOrderPriority @default(MEDIUM)
+  estimatedMinutes Int?
+  createdByUserId  String?
+  createdAt        DateTime         @default(now())
+  closedAt         DateTime?
+
+  machine    Machine?    @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  faultEvent FaultEvent? @relation(fields: [faultEventId], references: [id])
+  aiSession  AiSession?  @relation(fields: [aiSessionId], references: [id])
+  createdBy  User?       @relation("UserCreatedWorkOrders", fields: [createdByUserId], references: [id])
+
+  @@index([machineId, status])
+  @@index([faultEventId])
+  @@index([aiSessionId])
+}
+
+// AI oturumları
+model AiSession {
+  id              String    @id @default(cuid())
+  userId          String?
+  machineId       String?
+  mode            AiMode
+  question        String
+  aiShortAnswer   String?
+  aiDetailedAnswer String?
+  aiRawJson       Json?
+  createdAt       DateTime  @default(now())
+
+  machine   Machine?    @relation(fields: [machineId], references: [id])
+  user      User?       @relation(fields: [userId], references: [id])
+  workOrders WorkOrder[]
+  feedbacks AiFeedback[]
+
+  @@index([machineId, createdAt])
+  @@index([userId])
+}
+
+// AI geri bildirimi
+model AiFeedback {
+  id          String           @id @default(cuid())
+  aiSessionId String
+  result      AiFeedbackResult
+  comment     String?
+  createdAt   DateTime         @default(now())
+
+  aiSession AiSession @relation(fields: [aiSessionId], references: [id], onDelete: Cascade)
+
+  @@index([aiSessionId])
+}
+
+enum WorkOrderStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+enum WorkOrderPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AiMode {
+  SHORT
+  DETAILED
+  WORK_ORDER
+}
+
+enum AiFeedbackResult {
+  SUCCESS
+  FAIL
+  PARTIAL
+}
+
+model User {
+  id           String      @id @default(cuid())
+  username     String      @unique
+  email        String      @unique
+  passwordHash String
+  name         String
+  role         UserRole    @default(SAHA_MUHENDISI)
+  isActive     Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  conversations      Conversation[]
+  sahaCozumleri      SahaCozumu[]   @relation("CreatedSahaCozumleri")
+  onaylananCozumler  SahaCozumu[]   @relation("ApprovedSahaCozumleri")
+  createdWorkOrders  WorkOrder[]    @relation("UserCreatedWorkOrders")
+  aiSessions         AiSession[]
+}
+
+enum UserRole {
+  SAHA_MUHENDISI
+  KIDEMLI_MUHENDIS
+  ADMIN
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  messages  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model SahaCozumu {
+  id              String            @id @default(cuid())
+  faultCode       String
+  problem         String
+  solution        String
+  equipmentName   String?
+  createdById     String
+  status          SahaCozumuStatus @default(PENDING)
+  approvedById    String?
+  approvedAt      DateTime?
+  rejectedAt      DateTime?
+  rejectionReason String?
+  createdAt       DateTime         @default(now())
+
+  createdBy User @relation("CreatedSahaCozumleri", fields: [createdById], references: [id])
+  approvedBy User? @relation("ApprovedSahaCozumleri", fields: [approvedById], references: [id])
+
+  @@index([faultCode])
+  @@index([status])
+}
+
+enum SahaCozumuStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// Belgeye özel kaynak chat sohbetleri
+model DocChatConversation {
+  id           String   @id @default(cuid())
+  documentName String
+  pageScope    String?  // "173" | "173,174,175" | "173-175" | "all" | null
+  title        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  messages     DocChatMessage[]
+
+  @@index([documentName])
+}
+
+model DocChatMessage {
+  id             String   @id @default(cuid())
+  conversationId String
+  conversation   DocChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String   // "user" | "assistant"
+  content        String   @db.Text
+  attachments    Json?
+  createdAt      DateTime @default(now())
+
+  @@index([conversationId])
+}

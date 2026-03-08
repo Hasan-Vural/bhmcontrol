@@ -1,0 +1,32 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'VITE_API_BASE_URL=${_VITE_API_BASE_URL}'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/${_SERVICE}:${_TAG}'
+      - '.'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/${_SERVICE}:$SHORT_SHA']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE}'
+      - '--image=gcr.io/$PROJECT_ID/${_SERVICE}:${_TAG}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+
+substitutions:
+  _SERVICE: bhm-web
+  _REGION: europe-west1
+  _TAG: ${BUILD_ID}
+  _VITE_API_BASE_URL: 'https://bhm-api-xxxxx.run.app/api'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

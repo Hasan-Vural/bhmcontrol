@@ -1,0 +1,22 @@
+# Sentence Transformers (For Local Embeddings)
+sentence-transformers
+
+# Vector Database
+chromadb
+
+# PDF & OCR Processing
+pypdfium2
+pytesseract
+Pillow
+
+# AI Model (Gemini)
+google-generativeai
+
+# Utilities
+python-dotenv
+colorlog
+rank_bm25
+
+# HTTP API (Web entegrasyonu)
+fastapi
+uvicorn[standard]
