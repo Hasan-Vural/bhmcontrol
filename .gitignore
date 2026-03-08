@@ -36,6 +36,9 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
+# Docs (planlama, notlar - backend/docs-public uygulama için saklanır)
+/docs/
+
 # Misc
 *.sql
 backup.sql
