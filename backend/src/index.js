@@ -90,11 +90,11 @@ if (fs.existsSync(frontendDist)) {
   });
 }
 
-startMockSensorService();
-prisma.machine.findMany({ where: { isActive: true }, select: { id: true } }).then((list) => {
-  registerMachineIds(list.map((m) => m.id));
-});
-
+// Önce dinlemeye başla (Cloud Run health check PORT=8080'de bekler)
 app.listen(PORT, () => {
   console.log(`API http://localhost:${PORT}`);
+  startMockSensorService();
+  prisma.machine.findMany({ where: { isActive: true }, select: { id: true } })
+    .then((list) => registerMachineIds(list.map((m) => m.id)))
+    .catch((err) => console.error('Machine IDs yüklenemedi (DB):', err.message));
 });

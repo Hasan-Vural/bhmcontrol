@@ -14,5 +14,6 @@ COPY src ./src/
 COPY docs-public ./docs-public/
 COPY scripts ./scripts/
 
-EXPOSE 3001
+ENV PORT=8080
+EXPOSE 8080
 CMD ["sh", "scripts/start.sh"]
