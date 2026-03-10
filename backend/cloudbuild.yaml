@@ -19,7 +19,7 @@ steps:
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--add-cloudsql-instances=bhmcontrol:europe-west1:bhmdb'
-      - '--set-secrets=DATABASE_URL=bhm-prod-DATABASE_URL:latest,JWT_SECRET=bhm-prod-JWT_SECRET:latest'
+      - '--set-secrets=DATABASE_URL=bhm-prod-DATABASE_URL:latest,JWT_SECRET=bhm-prod-JWT_SECRET:latest,TEST_HESAP_PASSWORD=TestHesap:latest'
       - '--timeout=300'
 
 substitutions:

@@ -6,10 +6,17 @@ const prisma = new PrismaClient();
 const USERS = [
   // Admin
   { username: 'bhmcontrol', email: 'bhmcontrol@factory.local', name: 'BHM Kontrol', password: 'bhm123', role: 'ADMIN' },
-  // Kıdemli teknisyen
+  // Kıdemli teknisyen (mevcut temel kullanıcılar)
   { username: 'berke', email: 'berke@factory.local', name: 'Berke', password: 'Berke123', role: 'KIDEMLI_MUHENDIS' },
   { username: 'meyrem', email: 'meyrem@factory.local', name: 'Meyrem', password: 'Meyrem123', role: 'KIDEMLI_MUHENDIS' },
   { username: 'hasan', email: 'hasan@factory.local', name: 'Hasan', password: 'Hasan123', role: 'KIDEMLI_MUHENDIS' },
+  // Yeni: Berke / Hasan / Meyrem için sahte üretim test hesapları
+  { username: 'berke.kidemli', email: 'berke.kidemli@test.local', name: 'Berke', password: 'berke123', role: 'KIDEMLI_MUHENDIS' },
+  { username: 'berke.saha', email: 'berke.saha@test.local', name: 'Berke (Saha)', password: 'berke123', role: 'SAHA_MUHENDISI' },
+  { username: 'hasan.kidemli', email: 'hasan.kidemli@test.local', name: 'Hasan', password: 'hasan123', role: 'KIDEMLI_MUHENDIS' },
+  { username: 'hasan.saha', email: 'hasan.saha@test.local', name: 'Hasan (Saha)', password: 'hasan123', role: 'SAHA_MUHENDISI' },
+  { username: 'meyrem.kidemli', email: 'meyrem.kidemli@test.local', name: 'Meyrem', password: 'meyrem123', role: 'KIDEMLI_MUHENDIS' },
+  { username: 'meyrem.saha', email: 'meyrem.saha@test.local', name: 'Meyrem (Saha)', password: 'meyrem123', role: 'SAHA_MUHENDISI' },
   // Bakımcı (2-3)
   { username: 'ali', email: 'ali@factory.local', name: 'Ali', password: 'Ali123', role: 'SAHA_MUHENDISI' },
   { username: 'veli', email: 'veli@factory.local', name: 'Veli', password: 'Veli123', role: 'SAHA_MUHENDISI' },
